@@ -33,6 +33,7 @@ This project is a FastAPI application that fetches Pokémon data from the PokeAP
 1. **Clone the repository:**
 
    ```sh
+   
    git clone https://github.com/shreeya34/pokemons.git
 
    ```
@@ -40,6 +41,7 @@ This project is a FastAPI application that fetches Pokémon data from the PokeAP
 2. **Create a virtual environment:**
     
     ```sh
+
     python3 -m venv venv
     source venv/bin/activate
 
@@ -48,6 +50,7 @@ This project is a FastAPI application that fetches Pokémon data from the PokeAP
 3. **Install the required dependencies:**
 
     ```sh
+
     pip install -r requirements.txt
 
     ```
@@ -73,7 +76,7 @@ This project is a FastAPI application that fetches Pokémon data from the PokeAP
     Parameters:
                 skip : The number of Pokémon to skip. Used for pagination. Default is 0.
                 limit: The number of Pokémon to return. Used for pagination. Default is 100
-                
+
     **Usage** 
         This endpoint is used to fetch a paginated list of Pokémon. For example, to get the first 10 Pokémon,
 

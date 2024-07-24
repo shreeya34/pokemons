@@ -1,9 +1,8 @@
-
 from pydantic import BaseModel
 
 class PokemonBase(BaseModel):
     name: str
-    image: str
+    image_url: str
     type: str
 
 class PokemonCreate(PokemonBase):
@@ -11,6 +10,6 @@ class PokemonCreate(PokemonBase):
 
 class Pokemon(PokemonBase):
     id: int
-    
+
     class Config:
         orm_mode = True

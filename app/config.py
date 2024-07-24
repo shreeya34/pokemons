@@ -1,7 +1,11 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
-    DATABASE_URL: str
+    database_host: str
+    database_port: int  # Ensure this is an int
+    database_username: str
+    database_password: str
+    database_name: str
 
     class Config:
         env_file = ".env"

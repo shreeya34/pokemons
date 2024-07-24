@@ -53,4 +53,4 @@ async def search_pokemons(name: str = None, type: str = None, db: AsyncSession =
 @app.get("/api/v1/store", response_model=List[schemas.Pokemon])
 async def store_and_get_pokemons(db: AsyncSession = Depends(database.get_db)):
     await fetch_and_store_pokemon_data()
-    return await crud.get_pokemons(db, skip=0)
+    return await crud.get_pokemons(db, skip=0, limit=100)

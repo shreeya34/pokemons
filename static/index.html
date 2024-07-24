@@ -13,7 +13,7 @@
             margin: auto;
             padding: 20px;
         }
-        input, select {
+        input {
             width: 100%;
             padding: 10px;
             margin: 10px 0;
@@ -43,37 +43,58 @@
         .pokemon img {
             margin-right: 10px;
         }
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .pagination button {
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Pokémon Search</h1>
         <input type="text" id="name" placeholder="Enter Pokémon name">
-        <select id="type">
-            <option value="">Select Pokémon type</option>
-            <option value="grass">Grass</option>
-            <option value="fire">Fire</option>
-            <option value="water">Water</option>
-            <option value="bug">Bug</option>
-            <option value="normal">Normal</option>
-            <option value="electric">Electric</option>
-            <option value="psychic">Psychic</option>
-            <option value="ghost">Ghost</option>
-            <option value="rock">Rock</option>
-            <option value="poison">Poison</option>
-        </select>
         <button onclick="searchPokemons()">Search</button>
         <div class="pokemon-list" id="pokemon-list"></div>
+        <div class="pagination" id="pagination">
+            <button id="prevBtn" onclick="prevPage()">Previous</button>
+            <button id="nextBtn" onclick="nextPage()">Next</button>
+        </div>
     </div>
 
     <script>
+        let currentPage = 0;
+        const limit = 10;
+        let isSearching = false;
+
+        // Function to show pagination buttons
+        function showPagination() {
+            document.getElementById('pagination').style.display = 'block';
+        }
+
+        // Function to hide pagination buttons
+        function hidePagination() {
+            document.getElementById('pagination').style.display = 'none';
+        }
+
         async function searchPokemons() {
+            isSearching = true;
             const name = document.getElementById('name').value;
-            const type = document.getElementById('type').value;
-            const response = await fetch(`/api/v1/pokemons/search?name=${name}&type=${type}`);
+            const response = await fetch(`/api/v1/pokemons/search?name=${name}`);
             const pokemons = await response.json();
             const pokemonList = document.getElementById('pokemon-list');
+            
             pokemonList.innerHTML = '';
+
+            if (pokemons.length === 0) {
+                pokemonList.innerHTML = '<p>No Pokémon found.</p>';
+                hidePagination();
+                return;
+            }
 
             pokemons.forEach(pokemon => {
                 const pokemonDiv = document.createElement('div');
@@ -87,7 +108,74 @@
                 `;
                 pokemonList.appendChild(pokemonDiv);
             });
+
+            hidePagination();
         }
+
+        async function fetchPokemons() {
+            isSearching = false;
+            const response = await fetch(`/api/v1/pokemons?skip=${currentPage * limit}&limit=${limit}`);
+            const pokemons = await response.json();
+            const pokemonList = document.getElementById('pokemon-list');
+            
+            pokemonList.innerHTML = '';
+
+            if (pokemons.length === 0) {
+                pokemonList.innerHTML = '<p>No Pokémon found.</p>';
+                hidePagination();
+                return;
+            }
+
+            pokemons.forEach(pokemon => {
+                const pokemonDiv = document.createElement('div');
+                pokemonDiv.className = 'pokemon';
+                pokemonDiv.innerHTML = `
+                    <img src="${pokemon.image_url}" alt="${pokemon.name}">
+                    <div>
+                        <h2>${pokemon.name}</h2>
+                        <p>Type: ${pokemon.type}</p>
+                    </div>
+                `;
+                pokemonList.appendChild(pokemonDiv);
+            });
+
+            showPagination();
+
+            // Check if we need to disable the 'Next' button
+            const nextButton = document.getElementById('nextBtn');
+            const prevButton = document.getElementById('prevBtn');
+            
+            // Assume a fixed total count here; adjust based on API response
+            const totalCount = 100; 
+            const totalPages = Math.ceil(totalCount / limit);
+
+            if (currentPage >= totalPages - 1) {
+                nextButton.disabled = true;
+            } else {
+                nextButton.disabled = false;
+            }
+
+            if (currentPage === 0) {
+                prevButton.disabled = true;
+            } else {
+                prevButton.disabled = false;
+            }
+        }
+
+        function nextPage() {
+            currentPage++;
+            fetchPokemons();
+        }
+
+        function prevPage() {
+            if (currentPage > 0) {
+                currentPage--;
+                fetchPokemons();
+            }
+        }
+
+        // Initial load for pagination
+        fetchPokemons();
     </script>
 </body>
 </html>

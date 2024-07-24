@@ -21,8 +21,6 @@ async def startup_event():
 async def read_index():
     return "static/index.html"
 
-
-
 async def fetch_and_store_pokemon_data():
     async with httpx.AsyncClient() as client:
         response = await client.get('https://pokeapi.co/api/v2/pokemon?limit=100')
@@ -31,12 +29,17 @@ async def fetch_and_store_pokemon_data():
             for poke in pokemons:
                 poke_details = await client.get(poke['url'])
                 details = poke_details.json()
-                pokemon = models.Pokemon(
-                    name=details['name'],
-                    image_url=details['sprites']['front_default'],
-                    type=details['types'][0]['type']['name']
+                # Check if the Pokemon already exists in the database
+                existing_pokemon = await session.execute(
+                    select(models.Pokemon).filter_by(name=details['name'])
                 )
-                session.add(pokemon)
+                if existing_pokemon.scalars().first() is None:
+                    pokemon = models.Pokemon(
+                        name=details['name'],
+                        image_url=details['sprites']['front_default'],
+                        type=details['types'][0]['type']['name']
+                    )
+                    session.add(pokemon)
             await session.commit()
 
 @app.get("/api/v1/pokemons", response_model=List[schemas.Pokemon])

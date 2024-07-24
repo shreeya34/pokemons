@@ -67,16 +67,17 @@ This project is a FastAPI application that fetches Pokémon data from the PokeAP
 
 1. **Get Pokémon Data**
 
-    Endpoint: /api/v1/pokemons
+        Endpoint: /api/v1/pokemons
 
-    Method: GET
+        Method: GET
 
-    Description: Retrieves a list of Pokémon with pagination.
+        Description: Retrieves a list of Pokémon with pagination.
 
-    Parameters:
+        Parameters:
 
-    skip : The number of Pokémon to skip. Used for pagination. Default is 0.
-    limit: The number of Pokémon to return. Used for pagination. Default is 100
+            skip : The number of Pokémon to skip. Used for pagination. Default is 0.
+
+            limit: The number of Pokémon to return. Used for pagination. Default is 100
 
     **Usage** 
         This endpoint is used to fetch a paginated list of Pokémon. For example, to get the first 10 Pokémon,
